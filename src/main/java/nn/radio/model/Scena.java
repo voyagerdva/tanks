@@ -9,14 +9,14 @@ import static nn.radio.model.Constants.*;
 
 public class Scena extends JPanel implements ActionListener, MouseListener, KeyListener {
 
-    float Y = 350F;
-    float X = 5F;
+    float Y;
+    float X;
     float deltaX = 0.0F;
     float deltaY = 0.0F;
     float speed = 0.25F;
 
     private Color backgroundColor = Color.PINK;
-    private Color rectColorMain = Color.DARK_GRAY;
+    private Color rectColorMain;
     private Color rectColor1 = Color.WHITE;
     private Color rectColor2 = Color.YELLOW;
     private Color rectColor3 = Color.GRAY;
@@ -25,11 +25,17 @@ public class Scena extends JPanel implements ActionListener, MouseListener, KeyL
 
 //===========================================================================
 
-    public Scena() {
+    public Scena(float x, float y, Color c) {
         super();
+
+        this.X = x;
+        this.Y = y;
+        this.rectColorMain = c;
+        this.setFocusable(true);
+
         addMouseListener(this);
         addKeyListener(this);
-        this.setFocusable(true);
+
     }
 
 
@@ -108,12 +114,6 @@ public class Scena extends JPanel implements ActionListener, MouseListener, KeyL
             deltaY = speed;
             rectColorMain = rectColor3;
         }
-
-        if (e.getKeyCode() == KeyEvent.VK_END) {
-            deltaX = 0;
-            deltaY = 0;
-            rectColorMain = rectColor3;
-        }
     }
 
     @Override
@@ -150,15 +150,19 @@ public class Scena extends JPanel implements ActionListener, MouseListener, KeyL
         }
     }
 
-//==================================================================================
+//===================================================================================
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if ((e.getPoint().getX() <= X + RECT_WIDTH)
+        if ((       e.getPoint().getX() <= X + RECT_WIDTH)
                 && (e.getPoint().getX() >= X)
                 && (e.getPoint().getY() <= Y + RECT_HEIGHT)
                 && (e.getPoint().getY() >= Y)
         ) {
+            this.requestFocusInWindow();
+//            this.grabFocus();
+            System.out.printf("CLICKED on x=%s  y=%s\n", e.getPoint().getX(), e.getPoint().getY());
+
             if (alreadyClicked) {
                 rectColorMain = rectColor1;
                 alreadyClicked = false;
