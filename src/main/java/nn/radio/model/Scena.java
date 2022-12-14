@@ -150,7 +150,7 @@ public class Scena extends JPanel implements ActionListener, MouseListener, KeyL
         }
     }
 
-//===================================================================================
+//==================================================================================
 
     @Override
     public void mouseClicked(MouseEvent e) {

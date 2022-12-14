@@ -23,6 +23,5 @@ public class TankiApplication {
         frame.setVisible(true);
         frame.add(scena);
         scena.requestFocusInWindow();
-
     }
 }
