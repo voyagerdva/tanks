@@ -2,12 +2,13 @@ package nn.radio.model;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 
 import static nn.radio.model.Constants.*;
 //import static nn.radio.model.Constants.TANK_HEIGHT;
 
-public class Tank extends JPanel implements ActionListener, MouseListener, KeyListener {
+public class Tank {
 
     private Color backgroundColor = Color.PINK;
 
@@ -26,19 +27,17 @@ public class Tank extends JPanel implements ActionListener, MouseListener, KeyLi
     public static float TANK_HEIGHT = 50F;
 
     private boolean alreadyClicked = false;
+    private boolean isFocusable;
 
-    public Tank(float x, float y, Color c) {
+    public Tank (float x, float y, Color c, JPanel jPanel) {
         this.X = x;
         this.Y = y;
         this.tankColorMain = c;
 
-        this.setFocusable(false);
-
-        addMouseListener(this);
-        addKeyListener(this);
+        setFocusable(false);
     }
 
-    public void move(Graphics g) {
+    public void move (Graphics g) {
         g.setColor(backgroundColor);
         g.fillRect((int) X, (int) Y, (int) TANK_WIDTH, (int) TANK_HEIGHT);
 
@@ -72,7 +71,7 @@ public class Tank extends JPanel implements ActionListener, MouseListener, KeyLi
         g.fillRect((int) X, (int) Y, (int) TANK_WIDTH, (int) TANK_HEIGHT);
     }
 
-    public void keyEventPressed(KeyEvent e) {
+    public void keyEventPressed (KeyEvent e) {
         System.out.println(e.getKeyChar());
         System.out.println(e.getKeyCode());
 
@@ -101,7 +100,7 @@ public class Tank extends JPanel implements ActionListener, MouseListener, KeyLi
         }
     }
 
-    public void keyEventReleased(KeyEvent e) {
+    public void keyEventReleased (KeyEvent e) {
         System.out.println(e.getKeyChar());
         System.out.println(e.getKeyCode());
 
@@ -130,15 +129,13 @@ public class Tank extends JPanel implements ActionListener, MouseListener, KeyLi
         }
     }
 
-    public void  mouseEventClicked(MouseEvent e) {
-        if ((       e.getPoint().getX() <= X + TANK_WIDTH)
+    public void mouseEventClicked (MouseEvent e) {
+        if ((e.getPoint().getX() <= X + TANK_WIDTH)
                 && (e.getPoint().getX() >= X)
                 && (e.getPoint().getY() <= Y + TANK_HEIGHT)
                 && (e.getPoint().getY() >= Y)
         ) {
-            this.setFocusable(true);
-//            this.requestFocusInWindow();
-            this.grabFocus();
+            setFocusable(true);
             System.out.printf("CLICKED on x=%s  y=%s\n", e.getPoint().getX(), e.getPoint().getY());
 
             if (alreadyClicked) {
@@ -148,51 +145,16 @@ public class Tank extends JPanel implements ActionListener, MouseListener, KeyLi
                 tankColorMain = tankColor2;
                 alreadyClicked = true;
             }
+        } else {
+            setFocusable(false);
         }
     }
 
-//=======================================================================
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-//        this.keyEventPressed(e);
+    public void setFocusable (boolean b) {
+        isFocusable = b;
     }
 
-    @Override
-    public void keyReleased(KeyEvent e) {
-//        this.keyEventReleased(e);
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-    }
-
-
-//==========================================================================
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-//        this.mouseEventClicked(e);
-    }
-
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
+    public boolean isFocusable () {
+        return isFocusable;
     }
 }

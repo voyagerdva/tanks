@@ -25,22 +25,5 @@ public class TankiApplication {
 
         frame.add(scena1);
         frame.setVisible(true);
-
-
-//        int i = 2;
-//
-//        while (true) {
-//
-//            frame.add(list[i%2]);
-//            frame.setVisible(true);
-//            i += 1;
-//            System.out.println(i % 2);
-//            sleep(3000);
-//        }
-
-
-
-
-
     }
 }
