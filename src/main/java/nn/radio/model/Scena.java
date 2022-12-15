@@ -9,110 +9,67 @@ import static nn.radio.model.Constants.*;
 
 public class Scena extends JPanel implements ActionListener, MouseListener, KeyListener {
 
-    float Y;
-    float X;
-    float deltaX = 0.0F;
-    float deltaY = 0.0F;
-    float speed = 0.25F;
-
-    private Color backgroundColor = Color.PINK;
-    private Color rectColorMain;
-    private Color rectColor1 = Color.WHITE;
-    private Color rectColor2 = Color.YELLOW;
-    private Color rectColor3 = Color.GRAY;
-
-    private boolean alreadyClicked = false;
 
 //===========================================================================
 
-    public Scena(float x, float y, Color c) {
+    public Scena() {
         super();
-
-        this.X = x;
-        this.Y = y;
-        this.rectColorMain = c;
         this.setFocusable(true);
+        this.requestFocusInWindow();
 
         addMouseListener(this);
         addKeyListener(this);
-
     }
 
+    Tank tank1 = new Tank(100F, 100F, Color.DARK_GRAY);
+    Tank tank2 = new Tank(400F, 400F, Color.CYAN);
 
     @Override
-
     public void paintComponent(Graphics g) {
         // отрисовка всех объектов
-        drawFigure(g);
+        drawTank1(g);
+        drawTank2(g);
 
         repaint();
     }
 
-    private void drawFigure(Graphics g) {
-        g.setColor(backgroundColor);
-        g.fillRect((int) X, (int) Y, (int) RECT_WIDTH, (int) RECT_HEIGHT);
-
-        if (X >= SCENA_WIDTH - RECT_WIDTH - 10) {
-            deltaX = 0;
-            deltaY = 0;
-            X = SCENA_WIDTH - RECT_WIDTH - 15;
-        }
-
-        if (X < SCENA_BORDER) {
-            deltaX = 0;
-            deltaY = 0;
-            X = SCENA_BORDER + 15;
-        }
-
-        if (Y >= SCENA_HEIGTH - RECT_HEIGHT - 10) {
-            deltaX = 0;
-            deltaY = 0;
-            Y = SCENA_HEIGTH - RECT_HEIGHT - 15;
-        }
-
-        if (Y < SCENA_BORDER) {
-            deltaX = 0;
-            deltaY = 0;
-            Y = SCENA_BORDER + 15;
-        }
-
-        X = X + deltaX;
-        Y = Y + deltaY;
-        g.setColor(rectColorMain);
-        g.fillRect((int) X, (int) Y, (int) RECT_WIDTH, (int) RECT_HEIGHT);
-
+    private void drawTank1(Graphics g) {
+        tank1.move(g);
     }
+
+    private void drawTank2(Graphics g) {
+        tank2.move(g);
+    }
+
 
 
 //===================================================================================
 
     @Override
     public void keyPressed(KeyEvent e) {
-        System.out.println(e.getKeyChar());
-        System.out.println(e.getKeyCode());
-
-        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-            deltaX = -speed;
-            deltaY = 0;
-            rectColorMain = rectColor1;
+        if (tank1.isFocusable()) {
+            tank2.setFocusable(false);
+            tank1.keyEventPressed(e);
         }
 
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            deltaX = speed;
-            deltaY = 0;
-            rectColorMain = rectColor3;
+        if (tank2.isFocusable()) {
+            tank1.setFocusable(false);
+            tank2.keyEventPressed(e);
         }
 
-        if (e.getKeyCode() == KeyEvent.VK_UP) {
-            deltaX = 0;
-            deltaY = -speed;
-            rectColorMain = rectColor1;
+
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+        if (tank1.isFocusable()) {
+            tank2.setFocusable(false);
+            tank1.keyEventReleased(e);
         }
 
-        if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-            deltaX = 0;
-            deltaY = speed;
-            rectColorMain = rectColor3;
+        if (tank2.isFocusable()) {
+            tank1.setFocusable(false);
+            tank2.keyEventReleased(e);
         }
     }
 
@@ -120,58 +77,53 @@ public class Scena extends JPanel implements ActionListener, MouseListener, KeyL
     public void keyTyped(KeyEvent e) {
     }
 
-    @Override
-    public void keyReleased(KeyEvent e) {
-        System.out.println(e.getKeyChar());
-        System.out.println(e.getKeyCode());
 
-        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-            deltaX = 0;
-            deltaY = 0;
-            rectColorMain = rectColor1;
-        }
-
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            deltaX = 0;
-            deltaY = 0;
-            rectColorMain = rectColor3;
-        }
-
-        if (e.getKeyCode() == KeyEvent.VK_UP) {
-            deltaX = 0;
-            deltaY = 0;
-            rectColorMain = rectColor1;
-        }
-
-        if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-            deltaX = 0;
-            deltaY = 0;
-            rectColorMain = rectColor3;
-        }
-    }
 
 //===================================================================================
 
     @Override
     public void mouseClicked(MouseEvent e) {
-        if ((       e.getPoint().getX() <= X + RECT_WIDTH)
-                && (e.getPoint().getX() >= X)
-                && (e.getPoint().getY() <= Y + RECT_HEIGHT)
-                && (e.getPoint().getY() >= Y)
+        if ((       e.getPoint().getX() <= tank1.X + tank1.TANK_WIDTH)
+                && (e.getPoint().getX() >= tank1.X)
+                && (e.getPoint().getY() <= tank1.Y + tank1.TANK_HEIGHT)
+                && (e.getPoint().getY() >= tank1.Y)
         ) {
-            this.requestFocusInWindow();
-//            this.grabFocus();
+            tank1.setFocusable(true);
+//            tank1.requestFocusInWindow();
+            tank1.grabFocus();
+            tank2.setFocusable(false);
             System.out.printf("CLICKED on x=%s  y=%s\n", e.getPoint().getX(), e.getPoint().getY());
 
-            if (alreadyClicked) {
-                rectColorMain = rectColor1;
-                alreadyClicked = false;
-            } else {
-                rectColorMain = rectColor2;
-                alreadyClicked = true;
-            }
+//            if (alreadyClicked) {
+//                tankColorMain = tankColor1;
+//                alreadyClicked = false;
+//            } else {
+//                tankColorMain = tankColor2;
+//                alreadyClicked = true;
+//            }
+        }
+
+        if ((       e.getPoint().getX() <= tank2.X + tank2.TANK_WIDTH)
+                && (e.getPoint().getX() >= tank2.X)
+                && (e.getPoint().getY() <= tank2.Y + tank2.TANK_HEIGHT)
+                && (e.getPoint().getY() >= tank2.Y)
+        ) {
+            tank2.setFocusable(true);
+//            tank2.requestFocusInWindow();
+            tank2.grabFocus();
+            tank1.setFocusable(false);
+            System.out.printf("CLICKED on x=%s  y=%s\n", e.getPoint().getX(), e.getPoint().getY());
+
+//            if (alreadyClicked) {
+//                tankColorMain = tankColor1;
+//                alreadyClicked = false;
+//            } else {
+//                tankColorMain = tankColor2;
+//                alreadyClicked = true;
+//            }
         }
     }
+
 
     @Override
     public void actionPerformed(ActionEvent e) {

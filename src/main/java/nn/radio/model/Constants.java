@@ -8,9 +8,6 @@ public class Constants {
     public static int SCENA_WIDTH = 1200;
     public static int  SCENA_HEIGTH = 1000;
 
-    public static float RECT_WIDTH = 50F;
-    public static float RECT_HEIGHT = 50F;
-
     public static int  SCENA_BORDER = 10;
     public static int TOP_COORDINAT = 5;
 
