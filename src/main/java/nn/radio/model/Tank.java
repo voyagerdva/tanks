@@ -29,7 +29,7 @@ public class Tank {
     private boolean alreadyClicked = false;
     private boolean isFocusable;
 
-    public Tank (float x, float y, Color c, JPanel jPanel) {
+    public Tank (float x, float y, Color c) {
         this.X = x;
         this.Y = y;
         this.tankColorMain = c;

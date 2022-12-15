@@ -19,8 +19,8 @@ public class Scena extends JPanel implements ActionListener, MouseListener, KeyL
         addMouseListener(this);
         addKeyListener(this);
 
-        tankList.add(new Tank(100F, 100F, Color.DARK_GRAY, this));
-        tankList.add(new Tank(400F, 400F, Color.CYAN, this));
+        tankList.add(new Tank(100F, 100F, Color.DARK_GRAY));
+        tankList.add(new Tank(400F, 400F, Color.CYAN));
     }
 
     @Override
