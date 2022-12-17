@@ -1,46 +1,54 @@
 package nn.radio.model;
 
-import javax.swing.*;
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.URL;
 
 import static nn.radio.model.Constants.*;
-//import static nn.radio.model.Constants.TANK_HEIGHT;
 
-public class Tank extends JPanel implements ActionListener, MouseListener, KeyListener {
+public class Tank {
 
-    private Color backgroundColor = Color.PINK;
+    private final BufferedImage img1;
+    private final BufferedImage img1act;
+     BufferedImage img;
 
     float Y;
     float X;
     float deltaX = 0.0F;
     float deltaY = 0.0F;
     float speed = 0.25F;
-
-    private Color tankColorMain;
-    private Color tankColor1 = Color.WHITE;
-    private Color tankColor2 = Color.YELLOW;
-    private Color tankColor3 = Color.GRAY;
-
-    public static float TANK_WIDTH = 50F;
-    public static float TANK_HEIGHT = 50F;
+    float alpha = 45.0F;
 
     private boolean alreadyClicked = false;
+    private boolean isFocusable;
 
-    public Tank(float x, float y, Color c) {
+    public Tank(float x, float y) throws IOException {
+        URL imgURL1 = getClass().getResource("/tank1.png");
+        URL imgURL2 = getClass().getResource("/tank1act.png");
+        img1 = ImageIO.read(imgURL1);
+        img1act = ImageIO.read(imgURL2);
+        img = img1;
+
         this.X = x;
         this.Y = y;
-        this.tankColorMain = c;
 
         this.setFocusable(false);
+    }
 
-        addMouseListener(this);
-        addKeyListener(this);
+    private void setFocusable(boolean b) {
+        isFocusable = b;
     }
 
     public void move(Graphics g) {
-        g.setColor(backgroundColor);
-        g.fillRect((int) X, (int) Y, (int) TANK_WIDTH, (int) TANK_HEIGHT);
+        Graphics2D g2d = (Graphics2D) g;
+
+        g2d.rotate(Math.toRadians(alpha), TANK_WIDTH / 2, TANK_HEIGHT / 2);
+        g2d.setColor(backgroundColor);
+        g2d.fillRect((int) X, (int) Y, (int) TANK_WIDTH, (int) TANK_HEIGHT);
 
         if (X >= SCENA_WIDTH - TANK_WIDTH - 10) {
             deltaX = 0;
@@ -68,9 +76,19 @@ public class Tank extends JPanel implements ActionListener, MouseListener, KeyLi
 
         X = X + deltaX;
         Y = Y + deltaY;
-        g.setColor(tankColorMain);
-        g.fillRect((int) X, (int) Y, (int) TANK_WIDTH, (int) TANK_HEIGHT);
+        g2d.setColor(backgroundColor);
+
+
+        g2d.rotate(Math.toRadians(-alpha), TANK_WIDTH / 2, TANK_HEIGHT / 2);
+        g2d.fillRect((int) X, (int) Y, (int) TANK_WIDTH, (int) TANK_HEIGHT);
+        g2d.drawImage((Image) img, (int) X, (int) Y, (int) TANK_WIDTH, (int) TANK_HEIGHT, null);
+
     }
+
+//    public void turn(Graphics g) {
+//        Graphics2D g2d = (Graphics2D) g;
+//        g2d.rotate(alpha);
+//    }
 
     public void keyEventPressed(KeyEvent e) {
         System.out.println(e.getKeyChar());
@@ -79,26 +97,28 @@ public class Tank extends JPanel implements ActionListener, MouseListener, KeyLi
         if (e.getKeyCode() == KeyEvent.VK_LEFT) {
             deltaX = -speed;
             deltaY = 0;
-            tankColorMain = tankColor1;
         }
 
         if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
             deltaX = speed;
             deltaY = 0;
-            tankColorMain = tankColor3;
         }
 
         if (e.getKeyCode() == KeyEvent.VK_UP) {
             deltaX = 0;
             deltaY = -speed;
-            tankColorMain = tankColor1;
         }
 
         if (e.getKeyCode() == KeyEvent.VK_DOWN) {
             deltaX = 0;
             deltaY = speed;
-            tankColorMain = tankColor3;
         }
+
+        if (e.getKeyCode() == KeyEvent.VK_END) {
+//            this.turn();
+        }
+
+
     }
 
     public void keyEventReleased(KeyEvent e) {
@@ -108,91 +128,46 @@ public class Tank extends JPanel implements ActionListener, MouseListener, KeyLi
         if (e.getKeyCode() == KeyEvent.VK_LEFT) {
             deltaX = 0;
             deltaY = 0;
-            tankColorMain = tankColor1;
         }
 
         if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
             deltaX = 0;
             deltaY = 0;
-            tankColorMain = tankColor3;
         }
 
         if (e.getKeyCode() == KeyEvent.VK_UP) {
             deltaX = 0;
             deltaY = 0;
-            tankColorMain = tankColor1;
         }
 
         if (e.getKeyCode() == KeyEvent.VK_DOWN) {
             deltaX = 0;
             deltaY = 0;
-            tankColorMain = tankColor3;
         }
     }
 
     public void  mouseEventClicked(MouseEvent e) {
-        if ((       e.getPoint().getX() <= X + TANK_WIDTH)
+        if ((e.getPoint().getX() <= X + TANK_WIDTH)
                 && (e.getPoint().getX() >= X)
                 && (e.getPoint().getY() <= Y + TANK_HEIGHT)
                 && (e.getPoint().getY() >= Y)
         ) {
             this.setFocusable(true);
-//            this.requestFocusInWindow();
-            this.grabFocus();
+            img = img1act;
             System.out.printf("CLICKED on x=%s  y=%s\n", e.getPoint().getX(), e.getPoint().getY());
 
             if (alreadyClicked) {
-                tankColorMain = tankColor1;
                 alreadyClicked = false;
             } else {
-                tankColorMain = tankColor2;
                 alreadyClicked = true;
             }
+        } else {
+            img = img1;
+            this.setFocusable(false);
         }
     }
 
-//=======================================================================
-
-    @Override
-    public void keyPressed(KeyEvent e) {
-//        this.keyEventPressed(e);
-    }
-
-    @Override
-    public void keyReleased(KeyEvent e) {
-//        this.keyEventReleased(e);
-    }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-    }
-
-
-//==========================================================================
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-    }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-//        this.mouseEventClicked(e);
-    }
-
-
-    @Override
-    public void mousePressed(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
+    public boolean isFocusable() {
+        return isFocusable;
     }
 }

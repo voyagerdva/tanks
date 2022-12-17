@@ -4,12 +4,13 @@ import com.sun.security.auth.module.KeyStoreLoginModule;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.IOException;
 
 import static java.lang.Thread.sleep;
 import static nn.radio.model.Constants.*;
 
 public class TankiApplication {
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, IOException {
 
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice[] gs = ge.getScreenDevices();
@@ -17,29 +18,15 @@ public class TankiApplication {
 
         Scena scena1 = new Scena();
         JFrame frame = new JFrame(gd.getDefaultConfiguration());
+
         frame.setTitle("TANKS MODEL");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(SCENA_WIDTH + SCENA_BORDER * 2, SCENA_HEIGTH + SCENA_BORDER * 2);
-        frame.setBackground(Color.pink);
+        frame.setBackground(backgroundColor);
         frame.setResizable(true);
 
         frame.add(scena1);
         frame.setVisible(true);
-
-
-//        int i = 2;
-//
-//        while (true) {
-//
-//            frame.add(list[i%2]);
-//            frame.setVisible(true);
-//            i += 1;
-//            System.out.println(i % 2);
-//            sleep(3000);
-//        }
-
-
-
 
 
     }
