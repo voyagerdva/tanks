@@ -1,11 +1,8 @@
 package nn.radio.model;
 
-import com.sun.security.auth.module.KeyStoreLoginModule;
-
 import javax.swing.*;
 import java.awt.*;
 
-import static java.lang.Thread.sleep;
 import static nn.radio.model.Constants.*;
 
 public class TankiApplication {
@@ -20,7 +17,7 @@ public class TankiApplication {
         frame.setTitle("TANKS MODEL");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(SCENA_WIDTH + SCENA_BORDER * 2, SCENA_HEIGTH + SCENA_BORDER * 2);
-        frame.setBackground(Color.pink);
+        frame.setBackground(BACKGROUND_COLOR);
         frame.setResizable(true);
 
         frame.add(scena1);
