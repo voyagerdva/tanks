@@ -19,16 +19,39 @@ public class Scena extends JPanel implements ActionListener, MouseListener, KeyL
         addMouseListener(this);
         addKeyListener(this);
 
-        tankList.add(new Tank(100F, 100F, Color.DARK_GRAY, this));
-        tankList.add(new Tank(400F, 400F, Color.CYAN, this));
+        tankList.add(new Tank(200F, 100F));
+        tankList.add(new Tank(200F, 400F));
+        tankList.add(new Tank(200F, 600F));
+        tankList.add(new Tank(200F, 700F));
+
+        tankList.add(new Tank(900F, 100F));
+        tankList.add(new Tank(900F, 400F));
+        tankList.add(new Tank(900F, 600F));
+        tankList.add(new Tank(900F, 700F));
+
     }
 
     @Override
     public void paintComponent (Graphics g) {
         // отрисовка всех объектов
-        tankList.forEach(t -> t.move(g));
-
+        intersectChargeAndTanks();
+        tankList.forEach(t -> t.draw(g));
         repaint();
+    }
+
+    private void intersectChargeAndTanks () {
+        tankList.forEach(tank -> {
+            tankList.forEach(t -> {
+                if(!t.equals(tank)) {
+                    t.chargeList.forEach( charge -> {
+                        if(tank.intersect(charge)){
+                            tank.makeDead();
+                            charge.alive = false;
+                        }
+                    });
+                }
+            });
+        });
     }
 
 
@@ -36,20 +59,18 @@ public class Scena extends JPanel implements ActionListener, MouseListener, KeyL
 
     @Override
     public void keyPressed (KeyEvent e) {
-        tankList.forEach(t -> {
-            if(t.isFocusable()){
-                t.keyEventPressed(e);
-            }
-        });
+        tankList.stream().filter(t->t.isFocusable())
+                .findFirst()
+                .get()
+                .keyEventPressed(e);
     }
 
     @Override
     public void keyReleased (KeyEvent e) {
-        tankList.forEach(t -> {
-            if(t.isFocusable()){
-                t.keyEventReleased(e);
-            }
-        });
+        tankList.stream().filter(t->t.isFocusable())
+                .findFirst()
+                .get()
+                .keyEventReleased(e);
     }
 
     @Override
