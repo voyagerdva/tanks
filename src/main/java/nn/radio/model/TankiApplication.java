@@ -14,7 +14,7 @@ public class TankiApplication {
 
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         GraphicsDevice[] gs = ge.getScreenDevices();
-        GraphicsDevice gd = gs[1];
+        GraphicsDevice gd = gs[0];
 
         Scena scena1 = new Scena();
         JFrame frame = new JFrame(gd.getDefaultConfiguration());

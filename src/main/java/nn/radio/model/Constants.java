@@ -16,8 +16,8 @@ public class Constants {
 
     public static Color backgroundColor = Color.green.darker();
 
-    public static float TANK_WIDTH = 70F;
-    public static float TANK_HEIGHT = 70F;
+    public static float TANK_WIDTH = 60F;
+    public static float TANK_HEIGHT = 60F;
 
 
 }

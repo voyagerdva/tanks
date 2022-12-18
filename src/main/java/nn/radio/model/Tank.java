@@ -18,10 +18,15 @@ public class Tank {
 
     float Y;
     float X;
+    float SHIFT = 30;
+
+    float A = 0.0F;
+
     float deltaX = 0.0F;
     float deltaY = 0.0F;
+    float deltaA = 0.0F;
+
     float speed = 0.25F;
-    float alpha = 45.0F;
 
     private boolean alreadyClicked = false;
     private boolean isFocusable;
@@ -45,10 +50,27 @@ public class Tank {
 
     public void move(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
-
-        g2d.rotate(Math.toRadians(alpha), TANK_WIDTH / 2, TANK_HEIGHT / 2);
+        g2d.fillArc(
+                (int) X - (int) SHIFT / 2,
+                (int) Y - (int) SHIFT / 2,
+                (int) TANK_WIDTH + (int) SHIFT,
+                (int) TANK_HEIGHT + (int) SHIFT,
+                (int) 0,
+                (int) 360);
         g2d.setColor(backgroundColor);
-        g2d.fillRect((int) X, (int) Y, (int) TANK_WIDTH, (int) TANK_HEIGHT);
+        g2d.rotate(Math.toRadians(A), X + TANK_WIDTH / 2, Y + TANK_HEIGHT / 2);
+
+        g2d.setColor(backgroundColor);
+        g2d.rotate(Math.toRadians(-A), X + TANK_WIDTH / 2, Y + TANK_HEIGHT / 2);
+        g2d.fillArc(
+                (int) X - (int) SHIFT / 2,
+                (int) Y - (int) SHIFT / 2,
+                (int) TANK_WIDTH + (int) SHIFT,
+                (int) TANK_HEIGHT + (int) SHIFT,
+                (int) 0,
+                (int) 360);
+
+
 
         if (X >= SCENA_WIDTH - TANK_WIDTH - 10) {
             deltaX = 0;
@@ -76,37 +98,41 @@ public class Tank {
 
         X = X + deltaX;
         Y = Y + deltaY;
-        g2d.setColor(backgroundColor);
+        A = A + deltaA;
 
-
-        g2d.rotate(Math.toRadians(-alpha), TANK_WIDTH / 2, TANK_HEIGHT / 2);
-        g2d.fillRect((int) X, (int) Y, (int) TANK_WIDTH, (int) TANK_HEIGHT);
-        g2d.drawImage((Image) img, (int) X, (int) Y, (int) TANK_WIDTH, (int) TANK_HEIGHT, null);
+        g2d.fillArc(
+                (int) X - (int) SHIFT / 2,
+                (int) Y - (int) SHIFT / 2,
+                (int) TANK_WIDTH + (int) SHIFT,
+                (int) TANK_HEIGHT + (int) SHIFT,
+                (int) 0,
+                (int) 360);
+        g2d.setColor(backgroundColor.brighter());
+        g2d.rotate(Math.toRadians(A), X + TANK_WIDTH / 2, Y + TANK_HEIGHT / 2);
+        g2d.drawImage((Image) img, (int) X, (int) Y, (int) TANK_WIDTH , (int) TANK_HEIGHT, null);
+        g2d.rotate(Math.toRadians(-A), X + TANK_WIDTH / 2, Y + TANK_HEIGHT / 2);
 
     }
-
-//    public void turn(Graphics g) {
-//        Graphics2D g2d = (Graphics2D) g;
-//        g2d.rotate(alpha);
-//    }
 
     public void keyEventPressed(KeyEvent e) {
         System.out.println(e.getKeyChar());
         System.out.println(e.getKeyCode());
 
         if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-            deltaX = -speed;
+            deltaX = 0;
             deltaY = 0;
+            deltaA = speed;
         }
 
         if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            deltaX = speed;
+            deltaX = 0;
             deltaY = 0;
+            deltaA = -speed;
         }
 
         if (e.getKeyCode() == KeyEvent.VK_UP) {
-            deltaX = 0;
-            deltaY = -speed;
+            deltaX = (float) (-speed * Math.cos(A));
+            deltaY = (float) (speed * Math.cos(A));
         }
 
         if (e.getKeyCode() == KeyEvent.VK_DOWN) {
@@ -128,11 +154,13 @@ public class Tank {
         if (e.getKeyCode() == KeyEvent.VK_LEFT) {
             deltaX = 0;
             deltaY = 0;
+            deltaA = 0;
         }
 
         if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
             deltaX = 0;
             deltaY = 0;
+            deltaA = 0;
         }
 
         if (e.getKeyCode() == KeyEvent.VK_UP) {
