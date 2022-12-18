@@ -1,4 +1,6 @@
-package nn.radio.model;
+package nn.radio;
+
+import nn.radio.model.Scena;
 
 import javax.swing.*;
 import java.awt.*;

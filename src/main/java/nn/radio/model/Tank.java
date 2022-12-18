@@ -35,8 +35,12 @@ public class Tank {
     private boolean alreadyClicked = false;
     private boolean isFocusable;
     private Torre tore;
+    private User user;
+    private String id;
 
-    public Tank (float x, float y) {
+    public Tank (String id, User user, float x, float y) {
+        this.id = id;
+        this.user = user;
         this.X = x;
         this.Y = y;
         tore = new Torre(x, y);
@@ -61,6 +65,15 @@ public class Tank {
         g2d.rotate(Math.toRadians(alpha), (int) (X + TANK_HEIGHT / 2), (int) (Y + TANK_WIDTH / 2));
         g.fillRect((int) X - BG_BORDER, (int) Y - BG_BORDER, (int) TANK_HEIGHT + BG_BORDER, (int) TANK_WIDTH + BG_BORDER);
         g2d.rotate(Math.toRadians(-alpha), (int) (X + TANK_HEIGHT / 2), (int) (Y + TANK_WIDTH / 2));
+
+        g2d.rotate(Math.toRadians(alpha), (int) (X + TANK_HEIGHT / 2), (int) (Y + TANK_WIDTH / 2));
+        g.drawImage(img, (int) X, (int) Y, (int) TANK_HEIGHT, (int) TANK_WIDTH, null);
+        tore.draw(g, (X + TANK_HEIGHT / 2.4F), (Y + TANK_WIDTH / 3), alpha);
+        g2d.rotate(Math.toRadians(-alpha), (int) (X + TANK_HEIGHT / 2), (int) (Y + TANK_WIDTH / 2));
+        tore.drawCharges(g);
+    }
+
+    public void move () {
         if (X >= SCENA_WIDTH - TANK_HEIGHT - 10) {
             deltaX = 0;
             deltaY = 0;
@@ -88,12 +101,6 @@ public class Tank {
         X = X + deltaX;
         Y = Y + deltaY;
         alpha = alpha + deltaAlpha;
-        g2d.rotate(Math.toRadians(alpha), (int) (X + TANK_HEIGHT / 2), (int) (Y + TANK_WIDTH / 2));
-
-        g.drawImage(img, (int) X, (int) Y, (int) TANK_HEIGHT, (int) TANK_WIDTH, null);
-        tore.draw(g, (X + TANK_HEIGHT / 2.4F), (Y + TANK_WIDTH / 3), alpha);
-        g2d.rotate(Math.toRadians(-alpha), (int) (X + TANK_HEIGHT / 2), (int) (Y + TANK_WIDTH / 2));
-        tore.drawCharges(g);
     }
 
     public void keyEventPressed (KeyEvent e) {
@@ -204,5 +211,9 @@ public class Tank {
 
     public void makeDead () {
         img = imgDaed;
+    }
+
+    public String getId () {
+        return id;
     }
 }
