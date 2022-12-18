@@ -30,6 +30,9 @@ public class Scena extends JPanel implements ActionListener, MouseListener, KeyL
         tankList.add(new Tank(400F, 200F));
         tankList.add(new Tank(500F, 300F));
         tankList.add(new Tank(600F, 400F));
+        tankList.add(new Tank(700F, 500F));
+        tankList.add(new Tank(800F, 600F));
+        tankList.add(new Tank(900F, 700F));
     }
 
 

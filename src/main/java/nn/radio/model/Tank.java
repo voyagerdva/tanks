@@ -3,7 +3,6 @@ package nn.radio.model;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
@@ -16,17 +15,17 @@ public class Tank {
     private final BufferedImage img1act;
      BufferedImage img;
 
-    float Y;
-    float X;
     float SHIFT = 30;
 
-    float A = 0.0F;
-
+    float Y;
+    float X;
     float deltaX = 0.0F;
     float deltaY = 0.0F;
-    float deltaA = 0.0F;
 
-    float speed = 0.25F;
+    double A = 0.0D;
+    double deltaA = 4.0D;
+
+    float speed = 0.4F;
 
     private boolean alreadyClicked = false;
     private boolean isFocusable;
@@ -50,6 +49,8 @@ public class Tank {
 
     public void move(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
+
+        g2d.setColor(backgroundColor);
         g2d.fillArc(
                 (int) X - (int) SHIFT / 2,
                 (int) Y - (int) SHIFT / 2,
@@ -57,20 +58,6 @@ public class Tank {
                 (int) TANK_HEIGHT + (int) SHIFT,
                 (int) 0,
                 (int) 360);
-        g2d.setColor(backgroundColor);
-        g2d.rotate(Math.toRadians(A), X + TANK_WIDTH / 2, Y + TANK_HEIGHT / 2);
-
-        g2d.setColor(backgroundColor);
-        g2d.rotate(Math.toRadians(-A), X + TANK_WIDTH / 2, Y + TANK_HEIGHT / 2);
-        g2d.fillArc(
-                (int) X - (int) SHIFT / 2,
-                (int) Y - (int) SHIFT / 2,
-                (int) TANK_WIDTH + (int) SHIFT,
-                (int) TANK_HEIGHT + (int) SHIFT,
-                (int) 0,
-                (int) 360);
-
-
 
         if (X >= SCENA_WIDTH - TANK_WIDTH - 10) {
             deltaX = 0;
@@ -98,7 +85,6 @@ public class Tank {
 
         X = X + deltaX;
         Y = Y + deltaY;
-        A = A + deltaA;
 
         g2d.fillArc(
                 (int) X - (int) SHIFT / 2,
@@ -109,60 +95,61 @@ public class Tank {
                 (int) 360);
         g2d.setColor(backgroundColor.brighter());
         g2d.rotate(Math.toRadians(A), X + TANK_WIDTH / 2, Y + TANK_HEIGHT / 2);
+
         g2d.drawImage((Image) img, (int) X, (int) Y, (int) TANK_WIDTH , (int) TANK_HEIGHT, null);
+
         g2d.rotate(Math.toRadians(-A), X + TANK_WIDTH / 2, Y + TANK_HEIGHT / 2);
 
     }
 
     public void keyEventPressed(KeyEvent e) {
-        System.out.println(e.getKeyChar());
-        System.out.println(e.getKeyCode());
-
         if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-            deltaX = 0;
-            deltaY = 0;
-            deltaA = speed;
+            A = A - deltaA;
+
+            System.out.println(A);
+            System.out.println("sin(A): " + Math.sin(Math.toRadians(A)));
+            System.out.println("cos(A): " + Math.cos(Math.toRadians(A)));
         }
 
         if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            deltaX = 0;
-            deltaY = 0;
-            deltaA = -speed;
+            A = A + deltaA;
+
+            System.out.println(A);
+            System.out.println("sin(A): " + Math.sin(Math.toRadians(Math.abs(A))));
+            System.out.println("cos(A): " + Math.cos(Math.toRadians(Math.abs(A))));
         }
 
+
         if (e.getKeyCode() == KeyEvent.VK_UP) {
-            deltaX = (float) (-speed * Math.cos(A));
-            deltaY = (float) (speed * Math.cos(A));
+            System.out.println("A = " + A);
+            if (A > 0) {
+                deltaX = (float) (speed * Math.sin(Math.toRadians(Math.abs(A))));
+                deltaY = (float) (-speed * Math.cos(Math.toRadians(Math.abs(A))));
+            }
+
+            if (A <= 0) {
+                deltaX = (float) (-speed * Math.sin(Math.toRadians(Math.abs(A))));
+                deltaY = (float) (-speed * Math.cos(Math.toRadians(Math.abs(A))));
+            }
         }
 
         if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-            deltaX = 0;
-            deltaY = speed;
-        }
+            System.out.println("A = " + A);
 
-        if (e.getKeyCode() == KeyEvent.VK_END) {
-//            this.turn();
-        }
+            if (A > 0) {
+                deltaX = (float) (-speed * Math.sin(Math.toRadians(Math.abs(A))));
+                deltaY = (float) (speed * Math.cos(Math.toRadians(Math.abs(A))));
+            }
 
+            if (A <= 0) {
+                deltaX = (float) (speed * Math.sin(Math.toRadians(Math.abs(A))));
+                deltaY = (float) (speed * Math.cos(Math.toRadians(Math.abs(A))));
+            }
+        }
 
     }
 
     public void keyEventReleased(KeyEvent e) {
-        System.out.println(e.getKeyChar());
-        System.out.println(e.getKeyCode());
-
-        if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-            deltaX = 0;
-            deltaY = 0;
-            deltaA = 0;
-        }
-
-        if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-            deltaX = 0;
-            deltaY = 0;
-            deltaA = 0;
-        }
-
         if (e.getKeyCode() == KeyEvent.VK_UP) {
             deltaX = 0;
             deltaY = 0;
@@ -182,6 +169,7 @@ public class Tank {
         ) {
             this.setFocusable(true);
             img = img1act;
+            System.out.println("Угол равен: " + A);
             System.out.printf("CLICKED on x=%s  y=%s\n", e.getPoint().getX(), e.getPoint().getY());
 
             if (alreadyClicked) {
@@ -194,6 +182,7 @@ public class Tank {
             this.setFocusable(false);
         }
     }
+
 
     public boolean isFocusable() {
         return isFocusable;

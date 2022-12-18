@@ -14,7 +14,7 @@ public class Constants {
     public static int LEVEL_NUMBER = 5;
     public static int BOTTOM_COORDINAT = SCENA_HEIGTH + 500;
 
-    public static Color backgroundColor = Color.green.darker();
+    public static Color backgroundColor = Color.green.darker().darker();
 
     public static float TANK_WIDTH = 60F;
     public static float TANK_HEIGHT = 60F;
