@@ -50,7 +50,7 @@ public class TankiApplication {
         scena1.setTankMap(tankMap);
         scenaList.add(scena1);
 
-        JFrame frame1 = new JFrame(gd1.getDefaultConfiguration());
+        JFrame frame1 = new JFrame(gd0.getDefaultConfiguration());
         frame1.setTitle("TANKS MODEL1");
         frame1.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame1.setSize(SCENA_WIDTH + SCENA_BORDER * 2, SCENA_HEIGTH + SCENA_BORDER * 2);

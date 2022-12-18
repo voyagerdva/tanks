@@ -5,6 +5,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Collection;
 
 import static nn.radio.Constants.*;
 import static nn.radio.Constants.SCENA_BORDER;
@@ -12,24 +13,26 @@ import static nn.radio.Constants.SCENA_BORDER;
 public class ClientCharge {
 
 
+    public String id;
     public boolean alive = true;
     private BufferedImage imgActive;
     private BufferedImage imgNonActive;
     private BufferedImage img;
 
-    float Y;
-    float X;
+    public float Y;
+    public float X;
     public static float CHARGE_HEIGHT = 100F;
     public static float CHARGE_WIDTH = 20F;
-    float alpha = 0.0F;
+    public float alpha = 0.0F;
     float deltaAlpha = 0.0F;
     float speedAlpha = 0.3F;
 
     float deltaX = 0.0F;
     float deltaY = 0.0F;
-    float speed = 1.0F;
+    public float speed = 1.0F;
 
-    public ClientCharge (float x, float y, float alpha) {
+    public ClientCharge (String id, float x, float y, float alpha) {
+        this.id = id;
         this.X = x;
         this.Y = y;
         this.alpha = alpha;
@@ -46,13 +49,7 @@ public class ClientCharge {
         deltaY = (float) (Math.sin(Math.toRadians(alpha))*speed);
     }
 
-    public void draw (Graphics g, java.util.List<ClientCharge> list) {
-        if ((X >= SCENA_WIDTH) || (X < SCENA_BORDER) || (Y >= SCENA_HEIGTH) || (Y < SCENA_BORDER) ){
-           alive = false;
-        }
-
-        X = X + deltaX;
-        Y = Y + deltaY;
+    public void draw (Graphics g, Collection<ClientCharge> list) {
         Graphics2D g2d = (Graphics2D)g;
         g2d.rotate(Math.toRadians(alpha),  (int) X, (int) Y);
         g.drawImage(img, (int) X, (int) Y, (int) CHARGE_HEIGHT, (int) CHARGE_WIDTH, null);

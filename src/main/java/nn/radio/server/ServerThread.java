@@ -44,12 +44,7 @@ public class ServerThread extends Thread {
                 t.move();
             });
             intersectChargeAndTanks();
-//            tankMap.values().stream()
-//                    .map(t->TankDto.fromTank(t))
-//                    .forEach(t->{
-//                        clientTankMap.get(t.id).update(t);
-//            });
-            scenaList.forEach(sc ->
+            scenaList.stream().forEach(sc ->
                     sc.updateTankMapWithDto(tankMap.values()
                             .stream()
                             .collect(Collectors.toMap(t1 -> t1.id,
@@ -59,7 +54,7 @@ public class ServerThread extends Thread {
                     )
             );
             try {
-                Thread.sleep(40);
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -67,19 +62,19 @@ public class ServerThread extends Thread {
     }
 
     private void intersectChargeAndTanks () {
-//        tankMap.values().forEach(clientTank -> {
-//            tankMap.values().forEach(t -> {
-//                if(!t.equals(clientTank)) {
-//                    t.clientChargeList.forEach(charge -> {
-//                        if(clientTank.intersect(charge)){
-//                            clientTank.makeDead();
-//                            charge.alive = false;
-//                            return;
-//                        }
-//                    });
-//                }
-//            });
-//        });
+        tankMap.values().forEach(clientTank -> {
+            tankMap.values().forEach(t -> {
+                if(!t.equals(clientTank)) {
+                    t.getTore().clientChargeList.forEach(charge -> {
+                        if(clientTank.intersect(charge)){
+                            clientTank.alive = false;
+                            charge.alive = false;
+                            return;
+                        }
+                    });
+                }
+            });
+        });
     }
 
     public void keyPressed (KeyEventDto e) {

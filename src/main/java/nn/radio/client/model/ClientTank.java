@@ -4,18 +4,17 @@ import nn.radio.dto.TankDto;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 
-import static nn.radio.Constants.*;
+import static nn.radio.Constants.BACKGROUND_COLOR;
 
 
 public class ClientTank {
 
-    public java.util.List<ClientCharge> clientChargeList;
+    public volatile java.util.List<ClientCharge> clientChargeList1;
+    public java.util.Map<String, ClientCharge> chargeMap;
     private BufferedImage imgActive;
     private BufferedImage imgNonActive;
     private BufferedImage imgDaed;
@@ -24,19 +23,12 @@ public class ClientTank {
     public float Y;
     public float X;
     public float alpha = 0.0F;
-    ;
-    float deltaX = 0.0F;
-    float deltaY = 0.0F;
-    float deltaAlpha = 0.0F;
-    float speedAlpha = 1.4F;
-    float speed = 1.45F;
 
     public static float TANK_HEIGHT = 109F;
     public static float TANK_WIDTH = 82F;
     public static int BG_BORDER = 3;
 
-    public boolean alreadyClicked = false;
-    public boolean isFocusable= false;
+    public boolean isFocusable = false;
     public boolean isAlive = true;
     public ClientTorre tore;
     public ClientUser clientUser;
@@ -49,7 +41,7 @@ public class ClientTank {
         this.X = x;
         this.Y = y;
         tore = new ClientTorre(x, y);
-        clientChargeList = tore.getChargeList();
+        chargeMap = tore.getChargeMap();
         setFocusable(false);
         URL imgURLActive = getClass().getResource("/tankActive2.png");
         URL imgURLNonActive = getClass().getResource("/tankNotActive2.png");
@@ -79,144 +71,12 @@ public class ClientTank {
         tore.drawCharges(g);
     }
 
-    public void move () {
-        if (X >= SCENA_WIDTH - TANK_HEIGHT - 10) {
-            deltaX = 0;
-            deltaY = 0;
-            X = SCENA_WIDTH - TANK_HEIGHT - 15;
-        }
-
-        if (X < SCENA_BORDER) {
-            deltaX = 0;
-            deltaY = 0;
-            X = SCENA_BORDER + 15;
-        }
-
-        if (Y >= SCENA_HEIGTH - TANK_WIDTH - 10) {
-            deltaX = 0;
-            deltaY = 0;
-            Y = SCENA_HEIGTH - TANK_WIDTH - 15;
-        }
-
-        if (Y < SCENA_BORDER) {
-            deltaX = 0;
-            deltaY = 0;
-            Y = SCENA_BORDER + 15;
-        }
-
-        X = X + deltaX;
-        Y = Y + deltaY;
-        alpha = alpha + deltaAlpha;
-    }
-
-    public void keyEventPressed (KeyEvent e) {
-
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_LEFT: {
-                deltaAlpha = -speedAlpha;
-                break;
-            }
-            case KeyEvent.VK_RIGHT: {
-                deltaAlpha = speedAlpha;
-                break;
-            }
-            case KeyEvent.VK_UP: {
-                deltaX = (float) Math.cos(Math.toRadians(alpha)) * speed;
-                deltaY = (float) Math.sin(Math.toRadians(alpha)) * speed;
-                break;
-            }
-            case KeyEvent.VK_DOWN: {
-                deltaX = -(float) Math.cos(Math.toRadians(alpha)) * speed;
-                deltaY = -(float) Math.sin(Math.toRadians(alpha)) * speed;
-                break;
-            }
-            case KeyEvent.VK_Q: {
-                tore.turnContrClockArrowDirection();
-                break;
-            }
-            case KeyEvent.VK_W: {
-                tore.turnByClockArrowDirection();
-                break;
-            }
-            case KeyEvent.VK_SPACE: {
-                tore.shoot(alpha);
-                break;
-            }
-        }
-    }
-
-    public void keyEventReleased (KeyEvent e) {
-
-        switch (e.getKeyCode()) {
-            case KeyEvent.VK_LEFT: {
-                deltaAlpha = 0.0F;
-                break;
-            }
-            case KeyEvent.VK_RIGHT: {
-                deltaAlpha = 0.0F;
-                break;
-            }
-            case KeyEvent.VK_UP: {
-                deltaX = 0;
-                deltaY = 0;
-                break;
-            }
-            case KeyEvent.VK_DOWN: {
-                deltaX = 0;
-                deltaY = 0;
-                break;
-            }
-            case KeyEvent.VK_Q: {
-                tore.zeroSpeedAlpha();
-                break;
-            }
-            case KeyEvent.VK_W: {
-                tore.zeroSpeedAlpha();
-                break;
-            }
-        }
-    }
-
-    public void mouseEventClicked (MouseEvent e) {
-        if ((e.getPoint().getX() <= X + TANK_HEIGHT)
-                && (e.getPoint().getX() >= X)
-                && (e.getPoint().getY() <= Y + TANK_WIDTH)
-                && (e.getPoint().getY() >= Y)
-        ) {
-            setFocusable(true);
-            img = imgActive;
-            if (alreadyClicked) {
-                alreadyClicked = false;
-            } else {
-                alreadyClicked = true;
-            }
-        } else {
-            setFocusable(false);
-            img = imgNonActive;
-        }
-    }
-
     public void setFocusable (boolean b) {
         isFocusable = b;
     }
 
     public boolean isFocusable () {
         return isFocusable;
-    }
-
-    public boolean intersect (ClientCharge clientCharge) {
-        if ((clientCharge.getX() <= X + TANK_HEIGHT)
-                && (clientCharge.getX() >= X)
-                && (clientCharge.getY() <= Y + TANK_WIDTH)
-                && (clientCharge.getY() >= Y)
-        ) {
-            return true;
-        }
-        return false;
-    }
-
-    public void makeDead () {
-        img = imgDaed;
     }
 
     public String getId () {
@@ -227,13 +87,28 @@ public class ClientTank {
         X = t.X;
         Y = t.Y;
         alpha = t.alpha;
-        isFocusable =t.isFocusable;
+        isFocusable = t.isFocusable;
         isAlive = t.isAlive;
-        if(isFocusable && isAlive){
+        tore.X = t.toreDto.X;
+        tore.Y = t.toreDto.Y;
+        tore.alpha = t.toreDto.alpha;
+        chargeMap.clear();
+        t.toreDto.clientChargeList.forEach(charge -> {
+            ClientCharge c = chargeMap.get(charge.id);
+            if (c == null) {
+                chargeMap.put(charge.id, new ClientCharge(charge.id, charge.X, charge.Y, charge.alpha));
+            } else {
+                c.X = charge.X;
+                c.Y = charge.Y;
+                c.alive = charge.alive;
+            }
+        });
+
+        if (isFocusable && isAlive) {
             img = imgActive;
-        }else if (isAlive){
+        } else if (isAlive) {
             img = imgNonActive;
-        }else {
+        } else {
             img = imgDaed;
         }
     }

@@ -32,7 +32,7 @@ public class TankDto extends UnitDto {
         dto.X = t.X;
         dto.Y = t.Y;
         dto.alpha = t.alpha;
-        dto.setTore(t.tore);
+        dto.setTore(ToreDto.fromClientTore(t.tore));
         return dto;
     }
 
@@ -43,6 +43,8 @@ public class TankDto extends UnitDto {
         dto.Y = t.Y;
         dto.alpha = t.alpha;
         dto.isFocusable = t.isFocusable();
+        dto.toreDto = ToreDto.fromServerTore(t.getTore());
+        dto.isAlive = t.alive;
         return dto;
     }
 

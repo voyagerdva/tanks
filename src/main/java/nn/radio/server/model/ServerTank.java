@@ -1,5 +1,6 @@
 package nn.radio.server.model;
 
+import nn.radio.client.model.ClientCharge;
 import nn.radio.client.model.ClientTorre;
 import nn.radio.client.model.ClientUser;
 import nn.radio.dto.KeyEventDto;
@@ -7,6 +8,7 @@ import nn.radio.dto.MouseEventDto;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
+import java.util.HashMap;
 
 import static nn.radio.Constants.*;
 import static nn.radio.Constants.SCENA_BORDER;
@@ -16,12 +18,13 @@ public class ServerTank {
     public float Y;
     public float X;
     public float alpha = 0.0F;
-    ;
+    public boolean alive = true;
+
     float deltaX = 0.0F;
     float deltaY = 0.0F;
     float deltaAlpha = 0.0F;
-    float speedAlpha = 1.4F;
-    float speed = 1.45F;
+    float speedAlpha = 6.4F;
+    float speed = 9.45F;
 
     public static float TANK_HEIGHT = 109F;
     public static float TANK_WIDTH = 82F;
@@ -30,7 +33,7 @@ public class ServerTank {
 
 
     private boolean isFocusable;
-    private ClientTorre tore;
+    private ServerTore tore;
     private ClientUser clientUser;
 
 
@@ -62,6 +65,7 @@ public class ServerTank {
         X = X + deltaX;
         Y = Y + deltaY;
         alpha = alpha + deltaAlpha;
+        tore.move((X + TANK_HEIGHT / 2.4F), (Y + TANK_WIDTH / 3));
     }
     
 
@@ -137,11 +141,11 @@ public class ServerTank {
         isFocusable = focusable;
     }
 
-    public ClientTorre getTore () {
+    public ServerTore getTore () {
         return tore;
     }
 
-    public void setTore (ClientTorre tore) {
+    public void setTore (ServerTore tore) {
         this.tore = tore;
     }
 
@@ -231,5 +235,16 @@ public class ServerTank {
         } else {
             setFocusable(false);
         }
+    }
+
+    public boolean intersect (ServerCharge clientCharge) {
+        if ((clientCharge.X <= X + TANK_HEIGHT)
+                && (clientCharge.X >= X)
+                && (clientCharge.Y <= Y + TANK_WIDTH)
+                && (clientCharge.Y >= Y)
+        ) {
+            return true;
+        }
+        return false;
     }
 }

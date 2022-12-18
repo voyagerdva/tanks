@@ -68,19 +68,19 @@ public class Scena extends JPanel implements ActionListener, MouseListener, KeyL
     }
 
     private void intersectChargeAndTanks () {
-        tankMap.values().forEach(clientTank -> {
-            tankMap.values().forEach(t -> {
-                if(!t.equals(clientTank)) {
-                    t.clientChargeList.forEach(charge -> {
-                        if(clientTank.intersect(charge)){
-                            clientTank.makeDead();
-                            charge.alive = false;
-                            return;
-                        }
-                    });
-                }
-            });
-        });
+//        tankMap.values().forEach(clientTank -> {
+//            tankMap.values().forEach(t -> {
+//                if(!t.equals(clientTank)) {
+//                    t.clientChargeList.forEach(charge -> {
+//                        if(clientTank.intersect(charge)){
+//                            clientTank.makeDead();
+//                            charge.alive = false;
+//                            return;
+//                        }
+//                    });
+//                }
+//            });
+//        });
     }
 
 
