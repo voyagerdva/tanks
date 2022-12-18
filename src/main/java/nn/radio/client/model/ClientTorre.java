@@ -1,4 +1,4 @@
-package nn.radio.model;
+package nn.radio.client.model;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -8,22 +8,22 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Torre {
-    private java.util.List<Charge> chargeList = new ArrayList<>();
+public class ClientTorre {
+    private java.util.List<ClientCharge> clientChargeList = new ArrayList<>();
     private BufferedImage imgActive;
     private BufferedImage imgNonActive;
     private BufferedImage img;
 
     float Y;
     float X;
-    public static float TORRE_HEIGHT = Tank.TANK_HEIGHT/3;
-    public static float TORRE_WIDTH = Tank.TANK_WIDTH/3;
+    public static float TORRE_HEIGHT = ClientTank.TANK_HEIGHT/3;
+    public static float TORRE_WIDTH = ClientTank.TANK_WIDTH/3;
     float alpha = 0.0F;
     float deltaAlpha = 0.0F;
     float speedAlpha = 0.2F;
     private boolean isFocusable;
 
-    public Torre (float x, float y) {
+    public ClientTorre (float x, float y) {
         this.X = x;
         this.Y = y;
 
@@ -39,24 +39,28 @@ public class Torre {
         }
     }
     public void draw (Graphics g, float baseX, float baseY, float baseAlpha) {
+        move(baseX, baseY);
         Graphics2D g2d = (Graphics2D)g;
+        g2d.rotate(Math.toRadians(alpha), (X + TORRE_HEIGHT/4), (Y + TORRE_WIDTH/2));
+        g.drawImage(img, (int) (X ), (int) (Y ), (int) TORRE_HEIGHT, (int) TORRE_WIDTH, null);
+        g2d.rotate(Math.toRadians(-(alpha)), (X + TORRE_HEIGHT/4), (Y + TORRE_WIDTH/2));
+    }
+
+    private void move (float baseX, float baseY) {
         X = baseX;
         Y = baseY;
         alpha = alpha + deltaAlpha;
-        g2d.rotate(Math.toRadians(alpha), (baseX + TORRE_HEIGHT/4), (baseY + TORRE_WIDTH/2));
-        g.drawImage(img, (int) (baseX ), (int) (baseY ), (int) TORRE_HEIGHT, (int) TORRE_WIDTH, null);
-        g2d.rotate(Math.toRadians(-(alpha)), (baseX + TORRE_HEIGHT/4), (baseY + TORRE_WIDTH/2));
     }
 
     public void drawCharges(Graphics g){
-        chargeList.removeIf(charge -> !charge.alive);
-        chargeList.forEach(charge -> {
-            charge.draw(g, chargeList);
+        clientChargeList.removeIf(clientCharge -> !clientCharge.alive);
+        clientChargeList.forEach(clientCharge -> {
+            clientCharge.draw(g, clientChargeList);
         });
     }
 
     public void shoot(float baseAlpha){
-        chargeList.add(new Charge(X, Y, alpha+baseAlpha));
+        clientChargeList.add(new ClientCharge(X, Y, alpha+baseAlpha));
     }
 
     public void turnContrClockArrowDirection (){
@@ -79,8 +83,8 @@ public class Torre {
         return isFocusable;
     }
 
-    public List<Charge> getChargeList () {
-        return chargeList;
+    public List<ClientCharge> getChargeList () {
+        return clientChargeList;
     }
 
 

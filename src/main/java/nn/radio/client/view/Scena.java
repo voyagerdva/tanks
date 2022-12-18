@@ -1,5 +1,9 @@
-package nn.radio.model;
+package nn.radio.client.view;
 
+import nn.radio.client.model.ClientTank;
+import nn.radio.client.model.ClientUser;
+import nn.radio.dto.KeyEventDto;
+import nn.radio.dto.MouseEventDto;
 import nn.radio.dto.TankDto;
 import nn.radio.server.ServerThread;
 
@@ -10,10 +14,10 @@ import java.util.*;
 
 public class Scena extends JPanel implements ActionListener, MouseListener, KeyListener {
 
-    Map<String, Tank> tankMap = new HashMap<>();
-    Map<String, User> userMap = new HashMap<>();
+    Map<String, ClientTank> tankMap = new HashMap<>();
+    Map<String, ClientUser> userMap = new HashMap<>();
 
-    ServerThread tankTread;
+    public ServerThread tankTread;
 //===========================================================================
 
     public Scena () {
@@ -23,57 +27,53 @@ public class Scena extends JPanel implements ActionListener, MouseListener, KeyL
         grabFocus();
         addMouseListener(this);
         addKeyListener(this);
-
-        createUser("Andy");
-        createUser("Kirry");
-
-        createTank( userMap.get(0),200F, 100F);
-        createTank( userMap.get(0),200F, 400F);
-
-        createTank(userMap.get(1),900F, 100F);
-        createTank(userMap.get(1),900F, 400F);
-
-
-        tankTread = new ServerThread(tankMap);
-        tankTread.start();
-
     }
 
-    public Tank createTank(User user){
-        return createTank( user,200F, 100F);
+    public void setTankMap(Map<String, ClientTank> tnkMap){
+        tnkMap.values().forEach(t -> {
+            createTank(t.clientUser.id, t.clientUser.name, t.id, t.X, t.Y);
+        });
     }
 
-    public Tank createTank(User user, float x, float y){
-        Tank tank = new Tank(UUID.randomUUID().toString(), user,x, y);
-        tankMap.put(tank.getId(),  tank);
-        return tank;
+    public ClientTank createTank(ClientUser clientUser, float x, float y){
+        ClientTank clientTank = new ClientTank(UUID.randomUUID().toString(), clientUser,x, y);
+        tankMap.put(clientTank.getId(), clientTank);
+        return clientTank;
     }
 
-    public User createUser(String name){
-        User user = new User(UUID.randomUUID().toString(), name);
-        userMap.put(user.id, user);
-        return user;
+    public ClientTank createTank(String userId,String name, String tankId, float x, float y){
+        ClientTank clientTank = new ClientTank(tankId, createUser(userId, name),x, y);
+        tankMap.put(clientTank.getId(), clientTank);
+        return clientTank;
     }
 
-    public void updateTankMap(Map<String, TankDto> map){
+    public ClientUser createUser(String userId, String name){
+        ClientUser clientUser = new ClientUser(userId, name);
+        userMap.put(clientUser.id, clientUser);
+        return clientUser;
+    }
 
+    public void updateTankMapWithDto(Map<String, TankDto> map){
+        map.values().forEach(dto->{
+            tankMap.get(dto.id).update(dto);
+        });
     }
 
     @Override
     public void paintComponent (Graphics g) {
         // отрисовка всех объектов
-        intersectChargeAndTanks();
+        //intersectChargeAndTanks();
         tankMap.values().forEach(t -> t.draw(g));
         repaint();
     }
 
     private void intersectChargeAndTanks () {
-        tankMap.values().forEach(tank -> {
+        tankMap.values().forEach(clientTank -> {
             tankMap.values().forEach(t -> {
-                if(!t.equals(tank)) {
-                    t.chargeList.forEach( charge -> {
-                        if(tank.intersect(charge)){
-                            tank.makeDead();
+                if(!t.equals(clientTank)) {
+                    t.clientChargeList.forEach(charge -> {
+                        if(clientTank.intersect(charge)){
+                            clientTank.makeDead();
                             charge.alive = false;
                             return;
                         }
@@ -88,18 +88,12 @@ public class Scena extends JPanel implements ActionListener, MouseListener, KeyL
 
     @Override
     public void keyPressed (KeyEvent e) {
-        tankMap.values().stream().filter(t->t.isFocusable())
-                .findFirst()
-                .get()
-                .keyEventPressed(e);
+        tankTread.keyPressed(KeyEventDto.fromKeyEvent(e));
     }
 
     @Override
     public void keyReleased (KeyEvent e) {
-        tankMap.values().stream().filter(t->t.isFocusable())
-                .findFirst()
-                .get()
-                .keyEventReleased(e);
+        tankTread.keyReleased(KeyEventDto.fromKeyEvent(e));
     }
 
     @Override
@@ -111,7 +105,7 @@ public class Scena extends JPanel implements ActionListener, MouseListener, KeyL
 
     @Override
     public void mouseClicked (MouseEvent e) {
-        tankMap.values().forEach(t -> t.mouseEventClicked(e));
+        tankTread.mouseClicked(MouseEventDto.fromMouseEvent(e));
     }
 
 

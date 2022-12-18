@@ -1,4 +1,4 @@
-package nn.radio.model;
+package nn.radio.client.model;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -6,10 +6,10 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 
-import static nn.radio.model.Constants.*;
-import static nn.radio.model.Constants.SCENA_BORDER;
+import static nn.radio.Constants.*;
+import static nn.radio.Constants.SCENA_BORDER;
 
-public class Charge {
+public class ClientCharge {
 
 
     public boolean alive = true;
@@ -29,7 +29,7 @@ public class Charge {
     float deltaY = 0.0F;
     float speed = 1.0F;
 
-    public Charge (float x, float y,  float alpha) {
+    public ClientCharge (float x, float y, float alpha) {
         this.X = x;
         this.Y = y;
         this.alpha = alpha;
@@ -46,7 +46,7 @@ public class Charge {
         deltaY = (float) (Math.sin(Math.toRadians(alpha))*speed);
     }
 
-    public void draw (Graphics g, java.util.List<Charge> list) {
+    public void draw (Graphics g, java.util.List<ClientCharge> list) {
         if ((X >= SCENA_WIDTH) || (X < SCENA_BORDER) || (Y >= SCENA_HEIGTH) || (Y < SCENA_BORDER) ){
            alive = false;
         }

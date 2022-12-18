@@ -1,4 +1,4 @@
-package nn.radio.model;
+package nn.radio;
 
 import java.awt.*;
 

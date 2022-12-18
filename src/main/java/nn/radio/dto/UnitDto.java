@@ -1,5 +1,5 @@
 package nn.radio.dto;
 
-public class UnitDto {
+class UnitDto {
     public String id;
 }

@@ -1,4 +1,6 @@
-package nn.radio.model;
+package nn.radio.client.model;
+
+import nn.radio.dto.TankDto;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -8,43 +10,46 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.URL;
 
-import static nn.radio.model.Constants.*;
+import static nn.radio.Constants.*;
 
-public class Tank {
 
-    public java.util.List<Charge> chargeList;
+public class ClientTank {
+
+    public java.util.List<ClientCharge> clientChargeList;
     private BufferedImage imgActive;
     private BufferedImage imgNonActive;
     private BufferedImage imgDaed;
     private BufferedImage img;
 
-    float Y;
-    float X;
-    float alpha = 0.0F;
+    public float Y;
+    public float X;
+    public float alpha = 0.0F;
     ;
     float deltaX = 0.0F;
     float deltaY = 0.0F;
     float deltaAlpha = 0.0F;
-    float speedAlpha = 0.4F;
-    float speed = 0.45F;
+    float speedAlpha = 1.4F;
+    float speed = 1.45F;
 
     public static float TANK_HEIGHT = 109F;
     public static float TANK_WIDTH = 82F;
     public static int BG_BORDER = 3;
 
-    private boolean alreadyClicked = false;
-    private boolean isFocusable;
-    private Torre tore;
-    private User user;
-    private String id;
+    public boolean alreadyClicked = false;
+    public boolean isFocusable= false;
+    public boolean isAlive = true;
+    public ClientTorre tore;
+    public ClientUser clientUser;
+    public String id;
 
-    public Tank (String id, User user, float x, float y) {
+    public ClientTank (String id, ClientUser clientUser, float x, float y) {
+
         this.id = id;
-        this.user = user;
+        this.clientUser = clientUser;
         this.X = x;
         this.Y = y;
-        tore = new Torre(x, y);
-        chargeList = tore.getChargeList();
+        tore = new ClientTorre(x, y);
+        clientChargeList = tore.getChargeList();
         setFocusable(false);
         URL imgURLActive = getClass().getResource("/tankActive2.png");
         URL imgURLNonActive = getClass().getResource("/tankNotActive2.png");
@@ -57,6 +62,7 @@ public class Tank {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        System.out.println("idTank = " + id);
     }
 
     public void draw (Graphics g) {
@@ -198,11 +204,11 @@ public class Tank {
         return isFocusable;
     }
 
-    public boolean intersect (Charge charge) {
-        if ((charge.getX() <= X + TANK_HEIGHT)
-                && (charge.getX() >= X)
-                && (charge.getY() <= Y + TANK_WIDTH)
-                && (charge.getY() >= Y)
+    public boolean intersect (ClientCharge clientCharge) {
+        if ((clientCharge.getX() <= X + TANK_HEIGHT)
+                && (clientCharge.getX() >= X)
+                && (clientCharge.getY() <= Y + TANK_WIDTH)
+                && (clientCharge.getY() >= Y)
         ) {
             return true;
         }
@@ -215,5 +221,20 @@ public class Tank {
 
     public String getId () {
         return id;
+    }
+
+    public void update (TankDto t) {
+        X = t.X;
+        Y = t.Y;
+        alpha = t.alpha;
+        isFocusable =t.isFocusable;
+        isAlive = t.isAlive;
+        if(isFocusable && isAlive){
+            img = imgActive;
+        }else if (isAlive){
+            img = imgNonActive;
+        }else {
+            img = imgDaed;
+        }
     }
 }
