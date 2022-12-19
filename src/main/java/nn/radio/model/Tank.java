@@ -47,6 +47,10 @@ public class Tank {
         isFocusable = b;
     }
 
+    public boolean isFocusable() {
+        return isFocusable;
+    }
+
     public void move(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
 
@@ -184,7 +188,4 @@ public class Tank {
     }
 
 
-    public boolean isFocusable() {
-        return isFocusable;
-    }
 }
