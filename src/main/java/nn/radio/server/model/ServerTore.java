@@ -20,6 +20,7 @@ public class ServerTore {
         X = baseX;
         Y = baseY;
         alpha = alpha + deltaAlpha;
+        clientChargeList.removeIf(c->!c.alive);
         clientChargeList.forEach( c -> c.move());
     }
 

@@ -15,7 +15,7 @@ public class ServerCharge {
     public float alpha = 0.0F;
     public static float CHARGE_HEIGHT = 100F;
     public static float CHARGE_WIDTH = 20F;
-    public boolean alive;
+    public boolean alive = true;
 
     float deltaAlpha = 0.0F;
     float speedAlpha = 0.3F;
@@ -31,7 +31,6 @@ public class ServerCharge {
         this.alpha = alpha;
         deltaX = (float) (Math.cos(Math.toRadians(alpha))*speed);
         deltaY = (float) (Math.sin(Math.toRadians(alpha))*speed);
-        System.out.println("X = " + X);
     }
 
     public void move () {
